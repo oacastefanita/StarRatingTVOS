@@ -128,7 +128,9 @@ public struct StarRating: View {
         
         return CGFloat(rating) * starWidth + floor(CGFloat(rating)) * configuration.spacing
     }
-    
+#if os(tvOS)
+    @FocusState var focusedChild: Int?
+#endif
     public var body: some View {
         GeometryReader { geo in
             let horizontalPadding = geo.size.width / CGFloat(configuration.numberOfStars * 2 + 2)
@@ -170,7 +172,7 @@ public struct StarRating: View {
                 HStack(spacing: configuration.spacing) {
                     ForEach((0 ..< configuration.numberOfStars), id: \.self) { index in
                         Button(action: {
-                            rating = Double(index)
+                            rating = Double(index + 1)
                             guard let onRatingChanged = onRatingChanged else { return }
                             onRatingChanged(rating)
                         }) {
@@ -179,28 +181,24 @@ public struct StarRating: View {
                                 .background(starBackground)
                         }
                         .buttonStyle(.card)
-                        
+                        .focused($focusedChild, equals: index)
                     }
                 }
                 
                 HStack(spacing: configuration.spacing) {
                     ForEach((0 ..< configuration.numberOfStars), id: \.self) { index in
-                        Button(action: {
-                            rating = Double(index)
-                            guard let onRatingChanged = onRatingChanged else { return }
-                            onRatingChanged(rating)
-                        }) {
                             starFilling
                                 .mask(Rectangle().size(width: maskWidth, height: geo.size.height))
                                 .overlay(starBorder)
-                        }
-                        .buttonStyle(.card)
                     }
                 }
                 .mask(Rectangle().size(width: maskWidth, height: geo.size.height))
             }
             .padding(.horizontal, horizontalPadding)
             .contentShape(Rectangle())
+            .onChange(of: focusedChild, perform: { value in
+                rating = Double((focusedChild ?? 0) + 1)
+            })
 #endif
         }
     }

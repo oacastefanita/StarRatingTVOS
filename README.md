@@ -6,7 +6,7 @@ This is a customizable star rating control written specifically for SwiftUI. It 
 It also contains a star Shape with customizable number of vertices and weight.
 
 ## Installation
-Requirements iOS 13+
+Requirements iOS 14+
 
 ### Swift Package Manager 
 1. In Xcode, open your project and navigate to File → Swift Packages → Add Package Dependency.

@@ -141,7 +141,7 @@ public struct StarRating: View {
                                      marginSize: horizontalPadding,
                                      xLocation: value.location.x)
             }
-#endif
+            
             ZStack {
                 HStack(spacing: configuration.spacing) {
                     ForEach((0 ..< configuration.numberOfStars), id: \.self) { index in
@@ -164,8 +164,43 @@ public struct StarRating: View {
             }
             .padding(.horizontal, horizontalPadding)
             .contentShape(Rectangle())
-#if os(iOS)
             .gesture(drag)
+#elseif os(tvOS)
+            ZStack {
+                HStack(spacing: configuration.spacing) {
+                    ForEach((0 ..< configuration.numberOfStars), id: \.self) { index in
+                        Button(action: {
+                            rating = Double(index)
+                            guard let onRatingChanged = onRatingChanged else { return }
+                            onRatingChanged(rating)
+                        }) {
+                            starBorder
+                                .shadow(color: configuration.shadowColor, radius: configuration.shadowRadius)
+                                .background(starBackground)
+                        }
+                        .buttonStyle(.card)
+                        
+                    }
+                }
+                
+                HStack(spacing: configuration.spacing) {
+                    ForEach((0 ..< configuration.numberOfStars), id: \.self) { index in
+                        Button(action: {
+                            rating = Double(index)
+                            guard let onRatingChanged = onRatingChanged else { return }
+                            onRatingChanged(rating)
+                        }) {
+                            starFilling
+                                .mask(Rectangle().size(width: maskWidth, height: geo.size.height))
+                                .overlay(starBorder)
+                        }
+                        .buttonStyle(.card)
+                    }
+                }
+                .mask(Rectangle().size(width: maskWidth, height: geo.size.height))
+            }
+            .padding(.horizontal, horizontalPadding)
+            .contentShape(Rectangle())
 #endif
         }
     }

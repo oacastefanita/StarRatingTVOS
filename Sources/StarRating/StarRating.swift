@@ -135,13 +135,13 @@ public struct StarRating: View {
             
             let maskWidth = ratingWidth(fullWidth:geo.size.width,
                                         horizontalPadding: horizontalPadding)
-            
+#if os(iOS)
             let drag = DragGesture(minimumDistance: 0).onChanged { value in
                 updateRatingIfNeeded(width: geo.size.width,
                                      marginSize: horizontalPadding,
                                      xLocation: value.location.x)
             }
-            
+#endif
             ZStack {
                 HStack(spacing: configuration.spacing) {
                     ForEach((0 ..< configuration.numberOfStars), id: \.self) { index in
@@ -164,7 +164,9 @@ public struct StarRating: View {
             }
             .padding(.horizontal, horizontalPadding)
             .contentShape(Rectangle())
+#if os(iOS)
             .gesture(drag)
+#endif
         }
     }
 }

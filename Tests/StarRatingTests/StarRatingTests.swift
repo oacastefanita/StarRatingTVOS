@@ -6,7 +6,7 @@ final class StarRatingTests: XCTestCase {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct
         // results.
-        XCTAssertEqual(StarRating().text, "Hello, World!")
+        XCTAssertEqual(StarRating(initialRating: 1).rating, 1)
     }
 
     static var allTests = [

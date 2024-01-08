@@ -194,6 +194,9 @@ public struct StarRating: View {
             .onChange(of: focusedChild, perform: { value in
                 rating = Double((focusedChild ?? 0) + 1)
             })
+            .onAppear(){
+                focusedChild = 0
+            }
 #endif
         }
     }

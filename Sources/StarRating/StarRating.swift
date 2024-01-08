@@ -26,6 +26,7 @@ public struct StarRating: View {
     
     /// Gets called when the user changes the rating by tapping or dragging
     private var onRatingChanged: ((Double) -> Void)?
+    private var onRatingCancelled: (() -> Void)?
     
     /// - Parameters:
     ///     - initialRating: The initial rating value
@@ -36,10 +37,11 @@ public struct StarRating: View {
     public init (
         initialRating: Double,
         configuration: Binding<StarRatingConfiguration> = .constant(StarRatingConfiguration()),
-        onRatingChanged: ((Double) -> Void)? = nil
+        onRatingChanged: ((Double) -> Void)? = nil,
+        onRatingCancelled: (() -> Void)? = nil
     ) {
         self.onRatingChanged = onRatingChanged
-        
+        self.onRatingCancelled = onRatingCancelled
         _configuration = configuration
         let normalizedRating = StarRating.normalizedRating(
             rating: initialRating,
@@ -192,7 +194,13 @@ public struct StarRating: View {
             .padding(.horizontal, horizontalPadding)
             .contentShape(Rectangle())
             .onChange(of: focusedChild, perform: { value in
-                rating = Double((focusedChild ?? 0) + 1)
+                if let newValue = value{
+                    rating = Double(newValue + 1)
+                }else{
+                    guard let onRatingCancelled = onRatingCancelled else { return }
+                    onRatingCancelled()
+                }
+                
             })
             .onAppear(){
                 focusedChild = 0

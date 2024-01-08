@@ -168,31 +168,26 @@ public struct StarRating: View {
             .contentShape(Rectangle())
             .gesture(drag)
 #elseif os(tvOS)
-            ZStack {
-                HStack(spacing: configuration.spacing) {
-                    ForEach((0 ..< configuration.numberOfStars), id: \.self) { index in
-                        Button(action: {
-                            rating = Double(index + 1)
-                            guard let onRatingChanged = onRatingChanged else { return }
-                            onRatingChanged(rating)
-                        }) {
+            HStack(spacing: configuration.spacing) {
+                ForEach((0 ..< configuration.numberOfStars), id: \.self) { index in
+                    Button(action: {
+                        rating = Double(index + 1)
+                        guard let onRatingChanged = onRatingChanged else { return }
+                        onRatingChanged(rating)
+                    }) {
+                        ZStack{
                             starBorder
                                 .shadow(color: configuration.shadowColor, radius: configuration.shadowRadius)
                                 .background(starBackground)
+                            if index < Int(rating){
+                                starFilling
+                            }
                         }
-                        .buttonStyle(.card)
-                        .focused($focusedChild, equals: index)
+                        
                     }
+                    .buttonStyle(.card)
+                    .focused($focusedChild, equals: index)
                 }
-                
-                HStack(spacing: configuration.spacing) {
-                    ForEach((0 ..< configuration.numberOfStars), id: \.self) { index in
-                            starFilling
-                                .mask(Rectangle().size(width: maskWidth, height: geo.size.height))
-                                .overlay(starBorder)
-                    }
-                }
-                .mask(Rectangle().size(width: maskWidth, height: geo.size.height))
             }
             .padding(.horizontal, horizontalPadding)
             .contentShape(Rectangle())
